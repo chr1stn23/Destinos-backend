@@ -1,0 +1,20 @@
+# Node modules
+node_modules/
+
+# Variables de entorno
+.env
+
+# Logs
+logs/
+*.log
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Nodemon
+*.pid
+
+# Editor
+.vscode/
+.idea/

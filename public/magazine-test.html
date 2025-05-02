@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Revistas</title>
+</head>
+<body>
+  <h1>Lista de Revistas</h1>
+  <ul id="magazineList"></ul>
+
+  <h2>Agregar Revista</h2>
+  <form id="createForm">
+    <input type="text" id="title" placeholder="Título" required><br>
+    <input type="number" id="issue_number" placeholder="Número de edición" required><br>
+    <input type="date" id="publication_date"><br>
+    <input type="text" id="cover_image_url" placeholder="URL Imagen"><br>
+    <input type="text" id="pdf_url" placeholder="URL PDF"><br>
+    <label>¿Física? <input type="checkbox" id="is_physical"></label><br>
+    <button type="submit">Crear</button>
+  </form>
+
+  <h2>Eliminar por ID</h2>
+  <input type="number" id="deleteId" placeholder="ID">
+  <button onclick="deleteMagazine()">Eliminar</button>
+
+  <script>
+    const API_URL = 'http://localhost:3000/api/magazines';
+
+    async function loadMagazines() {
+      const res = await fetch(API_URL);
+      const magazines = await res.json();
+      const list = document.getElementById('magazineList');
+      list.innerHTML = '';
+      magazines.forEach(m => {
+        const li = document.createElement('li');
+        li.textContent = `${m.title} (Edición ${m.issue_number})`;
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('createForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const data = {
+        title: document.getElementById('title').value,
+        issue_number: parseInt(document.getElementById('issue_number').value),
+        publication_date: document.getElementById('publication_date').value,
+        cover_image_url: document.getElementById('cover_image_url').value,
+        pdf_url: document.getElementById('pdf_url').value,
+        is_physical: document.getElementById('is_physical').checked
+      };
+
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      loadMagazines();
+      e.target.reset();
+    });
+
+    async function deleteMagazine() {
+      const id = document.getElementById('deleteId').value;
+      if (!id) return alert('Ingresa un ID');
+      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      loadMagazines();
+    }
+
+    loadMagazines();
+  </script>
+</body>
+</html>
