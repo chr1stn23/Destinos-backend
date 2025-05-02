@@ -14,6 +14,7 @@
    JWT_SECRET=contraseña_muy_segura
    EMAIL_USER=correo@dominio
    EMAIL_PASS=password
+   SMTP_HOST=mail.dominio.com
    BACKEND_BASE_URL=http://localhost:3000
    FRONTEND_BASE_URL=http://localhost:5173
 

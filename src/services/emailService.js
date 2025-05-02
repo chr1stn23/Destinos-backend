@@ -4,7 +4,9 @@ const path = require('path');
 class EmailService {
     constructor() {
         this.transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: process.env.SMTP_HOST || 'mail.destinosrevistaturismo.com',
+            port: 465,
+            secure: true,
             auth: {
                 user: process.env.EMAIL_USER,
                 pass: process.env.EMAIL_PASS,
@@ -28,7 +30,7 @@ class EmailService {
         try {
             const mailOptions = {
                 from: {
-                    name: 'Destinos',  // Cambia por el nombre de tu empresa
+                    name: 'Destinos Revista',  // Cambia por el nombre de tu empresa
                     address: process.env.EMAIL_USER
                 },
                 to: to,
