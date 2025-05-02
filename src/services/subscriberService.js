@@ -1,7 +1,6 @@
 const { Subscriber } = require('../models/models');
 const { hashPassword, comparePasswords } = require('../utils/passwordUtils');
-const bcrypt = require('bcrypt');
-const saltRounds = 10;
+require('bcrypt');
 
 // Funciones para gestión de suscriptores (datos)
 const getAllSubscribers = async (page = 1, pageSize = 10) => {
@@ -67,7 +66,7 @@ const updateSubscriberInfo = async (email, data) => {
     }
 
     // Actualiza los campos necesarios
-    Object.assign(subscriber, data);
+    await Object.assign(subscriber, data);
     await subscriber.save();
     return subscriber;
 };
@@ -85,11 +84,8 @@ const changePassword = async (email, current_password, new_password) => {
         throw new Error('La contraseña actual es incorrecta');
     }
 
-    // Hashear la nueva contraseña
-    const hashedPassword = await hashPassword(new_password);
-
-    // Actualizar la contraseña
-    subscriber.password = hashedPassword;
+    // Hashear y Actualizar la contraseña
+    subscriber.password = await hashPassword(new_password);
     await subscriber.save();
     return subscriber;
 };
@@ -118,59 +114,6 @@ const updateAccountStatus = async (email, is_active) => {
     return subscriber;
 };
 
-// Funciones relacionadas con autenticación (login, registro, etc.)
-
-const registerSubscriber = async (subscriberData) => {
-    const { subscribed_at, last_login, is_active, is_confirmed, id, ...filteredData } = subscriberData;
-
-    // Hash de la contraseña si existe
-    if (filteredData.password) {
-        filteredData.password = await hashPassword(filteredData.password);
-    }
-
-    const subscriber = await Subscriber.create(filteredData);
-    sendVerificationEmail(subscriber).catch((error) => console.error("Error al enviar correo de verificación", error));
-
-    return subscriber;
-};
-
-const loginSubscriber = async ({ email, password }) => {
-    const subscriber = await Subscriber.findOne({ where: { email } });
-    if (!subscriber) return null;
-    if (!subscriber.is_active) throw new Error('Cuenta inactiva');
-
-    const isMatch = await comparePasswords(password, subscriber.password);
-    if (!isMatch) throw new Error('Credenciales incorrectas');
-
-    subscriber.last_login = new Date();
-    await subscriber.save();
-
-    const payload = { id: subscriber.id, email: subscriber.email };
-    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '2h' });
-    const refreshToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
-
-    return { accessToken, refreshToken, id: subscriber.id, full_name: subscriber.full_name };
-};
-
-// Funciones para el manejo de tokens
-const refreshLoginToken = async (refreshToken) => {
-    try {
-        const decoded = jwt.verify(refreshToken, JWT_SECRET);
-        const subscriber = await Subscriber.findByPk(decoded.id);
-        if (!subscriber || !subscriber.is_active) {
-            return { success: false, code: 401, message: 'Usuario no encontrado o inactivo' };
-        }
-
-        const newAccessToken = jwt.sign({ id: subscriber.id, email: subscriber.email }, JWT_SECRET, { expiresIn: '2h' });
-
-        return { success: true, accessToken: newAccessToken };
-    } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            return { success: false, code: 401, message: 'Refresh token ha expirado' };
-        }
-        return { success: false, message: 'Refresh token inválido', code: 400 };
-    }
-};
 // Funciones para actualizar la contraseña
 const updatePassword = async (id, password, newPassword) => {
     const subscriber = await Subscriber.findByPk(id);
@@ -195,7 +138,4 @@ module.exports = {
     changePassword,
     updateMarketingPreferences,
     updateAccountStatus,
-    registerSubscriber,
-    loginSubscriber,
-    refreshLoginToken
 };

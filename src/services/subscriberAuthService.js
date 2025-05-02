@@ -17,7 +17,7 @@ const registerSubscriber = async (subscriberData) => {
 
     const subscriber = await Subscriber.create(filteredData);
     sendVerificationEmail(subscriber).catch(error =>
-        console.error("Error al enviar correo de verificación",error));
+        console.error("Error al enviar correo de verificación", error));
 
     return subscriber;
 };
@@ -63,7 +63,7 @@ const refreshLoginToken = async (refreshToken) => {
         if (error.name === 'TokenExpiredError') {
             return {success: false, code: 401, message: 'Refresh token ha expirado'};
         }
-        return { success: false, message: 'Refresh token inválido', code: 400 };
+        return {success: false, message: 'Refresh token inválido', code: 400};
     }
 }
 
@@ -73,7 +73,8 @@ const resendVerificationEmail = async (email) => {
 
     if (subscriber.is_confirmed) throw new Error('400');
 
-    await sendVerificationEmail(subscriber);
+    sendVerificationEmail(subscriber).catch(error =>
+        console.error("Error al enviar correo de verificación", error));
 };
 
 const verifyEmail = async (token) => {
@@ -105,7 +106,8 @@ const sendPasswordReset = async (email) => {
         return {success: false, message: 'Correo no encontrado', code: 404};
     }
 
-    await sendPasswordResetEmail(subscriber);
+    sendPasswordResetEmail(subscriber).catch(error =>
+        console.error("Error al enviar correo de recuperación de contraseña",error));
 
     return {success: true};
 };
