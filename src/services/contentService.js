@@ -7,6 +7,21 @@ const getAllContents = async (page = 1, pageSize = 10) => {
         limit: pageSize,
         offset: offset,
         order: [['publication_date', 'DESC']],
+        attributes: {
+            exclude: ['category_id', 'content_type_id'] // excluimos los IDs que ya no necesitamos
+        },
+        include: [
+            {
+                model: Category,
+                as: 'category',
+                attributes: ['name']  // solo el nombre
+            },
+            {
+                model: ContentType,
+                as: 'type',
+                attributes: ['name']  // solo el nombre
+            }
+        ]
     });
 
     return {
