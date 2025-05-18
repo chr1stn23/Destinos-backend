@@ -1,7 +1,7 @@
 'use strict';
 const { Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('ContentBlock', {
+    const ContentBlock = sequelize.define('ContentBlock', {
         type: DataTypes.STRING,
         display_order: DataTypes.INTEGER,
         data: DataTypes.TEXT

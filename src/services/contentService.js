@@ -42,11 +42,40 @@ const getContentById = async (id) => {
                 model: ContentBlock,
                 as: 'blocks',
                 attributes: ['id', 'type', 'display_order', 'data'],
+                separate: true,
+                order: [['display_order', 'ASC']]
             }
         ]
     });
 };
 
+const getContentBySlug = async (slug) => {
+    return await Content.findOne({
+        where: {slug},
+        attributes: {
+            exclude: ['category_id', 'content_type_id']
+        },
+        include: [
+            {
+                model: Category,
+                as: 'category',
+                attributes: ['id', 'name']
+            },
+            {
+                model: ContentType,
+                as: 'type',
+                attributes: ['id', 'name']
+            },
+            {
+                model: ContentBlock,
+                as: 'blocks',
+                attributes: ['id', 'type', 'display_order', 'data'],
+                separate: true,
+                order: [['display_order', 'ASC']]
+            }
+        ]
+    })
+}
 
 const createContent = async (contentData) => {
     const transaction = await sequelize.transaction();
@@ -139,6 +168,7 @@ const deleteContent = async (id) => {
 module.exports = {
     getAllContents,
     getContentById,
+    getContentBySlug,
     createContent,
     updateContent,
     deleteContent

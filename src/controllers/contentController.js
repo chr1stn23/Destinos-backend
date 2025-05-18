@@ -56,6 +56,31 @@ exports.getContentById = async (req, res) => {
     }
 }
 
+exports.getContentBySlug = async (req, res) => {
+    try {
+        const content = await ContentService.getContentBySlug(req.params.slug);
+
+        if (!content) {
+            return res.status(404).json({
+                success: false,
+                error: 'Contenido no encontrado'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            data: content
+        });
+
+    } catch (error) {
+        console.error('Error en getContentBySlug:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Error al obtener el contenido'
+        });
+    }
+}
+
 exports.createContent = async (req, res) => {
     try {
         const newContent = await ContentService.createContent(req.body);
