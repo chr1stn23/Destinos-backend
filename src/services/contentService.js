@@ -14,12 +14,12 @@ const getAllContents = async (page = 1, pageSize = 10) => {
             {
                 model: Category,
                 as: 'category',
-                attributes: ['name']  // solo el nombre
+                attributes: ['id','name']
             },
             {
                 model: ContentType,
                 as: 'type',
-                attributes: ['name']  // solo el nombre
+                attributes: ['id','name']
             }
         ]
     });
