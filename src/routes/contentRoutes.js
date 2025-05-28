@@ -5,6 +5,8 @@ const { authenticateJWT, isAdmin, isEditorOrAdmin } = require('../middlewares/au
 
 router.get('/', contentController.getAllContents);
 router.post('/', contentController.createContent);
+router.get('/count-by-category', contentController.countByCategory);
+router.get('/search', contentController.searchContents);
 router.get('/:id', contentController.getContentById);
 router.get('/slug/:slug', contentController.getContentBySlug);
 router.put('/:id', contentController.updateContent);

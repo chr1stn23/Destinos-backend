@@ -163,3 +163,38 @@ exports.deleteContent = async (req, res) => {
         });
     }
 }
+
+exports.countByCategory = async (req, res) => {
+    try {
+        const count = await ContentService.countByCategory();
+        return res.status(200).json({
+            success: true,
+            data: count
+        });
+    } catch (error) {
+        console.error('Error en countByCategory:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Error al obtener el conteo de contenidos por categoría',
+            detail: error.message
+        });
+    }
+}
+
+exports.searchContents = async (req, res) => {
+    try {
+        const results = await ContentService.searchContents(req.query);
+        return res.status(200).json({
+            success: true,
+            count: results.length,
+            data: results
+        });
+    } catch (error) {
+        console.error('Error en searchContents:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Error al buscar contenidos',
+            details: error.message
+        });
+    }
+};

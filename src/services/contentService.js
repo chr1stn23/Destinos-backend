@@ -1,4 +1,5 @@
 const {Content, ContentBlock, Category, ContentType, sequelize} = require('../models/models');
+const {Sequelize, Op} = require("sequelize");
 
 const getAllContents = async (page = 1, pageSize = 10) => {
     const offset = (page - 1) * pageSize;
@@ -180,11 +181,67 @@ const deleteContent = async (id) => {
     return await content.destroy();
 }
 
+const countByCategory = async () => {
+    const results = await Content.findAll({
+        attributes: [
+            'category_id',
+            [Sequelize.fn('COUNT', Sequelize.col('Content.id')), 'contentCount']
+        ],
+        include: [{
+            model: Category,
+            as: 'category',
+            attributes: ['name']
+        }],
+        group: ['category.id', 'category_id'],
+    });
+
+    return results.map(r => ({
+        categoryId: r.category_id,
+        categoryName: r.category.name,
+        count: parseInt(r.get('contentCount'))
+    }));
+}
+
+const searchContents = async (query) => {
+    const { q, categoryId, contentTypeId } = query;
+
+    const where = {};
+
+    // Búsqueda por palabra clave en título, subtítulo o autor
+    if (q) {
+        where[Op.or] = [
+            { title: { [Op.like]: `%${q}%` } },
+            { subtitle: { [Op.like]: `%${q}%` } },
+            { author: { [Op.like]: `%${q}%` } }
+        ];
+    }
+
+    // Filtro adicional por categoría
+    if (categoryId) {
+        where.category_id = categoryId;
+    }
+
+    // Filtro adicional por tipo de contenido
+    if (contentTypeId) {
+        where.content_type_id = contentTypeId;
+    }
+
+    return await Content.findAll({
+        where,
+        include: [
+            {model: Category, as: 'category', attributes: ['name']},
+            {model: ContentType, as: 'type', attributes: ['name']}
+        ]
+    });
+};
+
 module.exports = {
     getAllContents,
     getContentById,
     getContentBySlug,
     createContent,
     updateContent,
-    deleteContent
+    deleteContent,
+    countByCategory,
+    searchContents,
 }
