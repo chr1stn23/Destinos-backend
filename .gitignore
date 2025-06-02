@@ -4,6 +4,8 @@ node_modules/
 # Variables de entorno
 .env
 
+public/uploads/
+
 # Logs
 logs/
 *.log
