@@ -1,7 +1,9 @@
 const {Magazine} = require('../models/models');
 
 const getAllMagazines = async () => {
-    return await Magazine.findAll();
+    return await Magazine.findAll({
+        order: [['publication_date', 'DESC']],
+    });
 }
 
 const getMagazineById = async (id) => {
