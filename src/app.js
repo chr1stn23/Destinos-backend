@@ -9,6 +9,7 @@ const contentTypeRoutes = require('./routes/contentTypeRoutes');
 const contentRoutes = require('./routes/contentRoutes');
 const magazineRoutes = require('./routes/magazineRoutes');
 const userRoutes = require('./routes/userRoutes');
+const interactiveVideoRoutes = require('./routes/interactiveVideoRoutes');
 
 const app = express();
 
@@ -25,5 +26,6 @@ app.use('/api/content-types', contentTypeRoutes);
 app.use('/api/contents', contentRoutes);
 app.use('/api/magazines', magazineRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/interactive-videos', interactiveVideoRoutes);
 
 module.exports = app;

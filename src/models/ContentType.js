@@ -1,7 +1,7 @@
 'use strict';
 const { Sequelize } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-    return sequelize.define('ContentType', {
+    const ContentType = sequelize.define('ContentType', {
         name: {
             type: DataTypes.STRING,
             unique: true
