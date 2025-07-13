@@ -1,7 +1,8 @@
-// app.js (antes `src/app.js`)
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const multer = require('multer'); // importante para manejar errores de multer
+
 const subscriberRoutes = require('./routes/subscriberRoutes');
 const subscriberAuthRoutes = require('./routes/subscriberAuthRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
@@ -10,6 +11,7 @@ const contentRoutes = require('./routes/contentRoutes');
 const magazineRoutes = require('./routes/magazineRoutes');
 const userRoutes = require('./routes/userRoutes');
 const interactiveVideoRoutes = require('./routes/interactiveVideoRoutes');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express();
 
@@ -27,5 +29,15 @@ app.use('/api/contents', contentRoutes);
 app.use('/api/magazines', magazineRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/interactive-videos', interactiveVideoRoutes);
+app.use('/api/upload', uploadRoutes);
+
+app.use((err, req, res) => {
+    if (err instanceof multer.MulterError || err.message === 'Tipo de archivo no permitido') {
+        return res.status(400).json({ error: err.message });
+    }
+
+    console.error('Error no manejado:', err);
+    res.status(500).json({ error: 'Error interno del servidor' });
+});
 
 module.exports = app;
