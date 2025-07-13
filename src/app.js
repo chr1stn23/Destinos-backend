@@ -31,7 +31,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/interactive-videos', interactiveVideoRoutes);
 app.use('/api/upload', uploadRoutes);
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
     if (err instanceof multer.MulterError || err.message === 'Tipo de archivo no permitido') {
         return res.status(400).json({ error: err.message });
     }

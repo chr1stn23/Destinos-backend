@@ -8,8 +8,8 @@ const {
 } = require('../middlewares/multerMiddleware');
 
 // Endpoints de subida
-router.post('/upload/image', uploadImage.single('file'), uploadController.uploadImage);
-router.post('/upload/video', uploadVideo.single('file'), uploadController.uploadVideo);
-router.post('/upload/magazine', uploadMagazine.single('file'), uploadController.uploadMagazine);
+router.post('/image', uploadImage.single('file'), uploadController.uploadImage);
+router.post('/video', uploadVideo.single('file'), uploadController.uploadVideo);
+router.post('/magazine', uploadMagazine.single('file'), uploadController.uploadMagazine);
 
 module.exports = router;

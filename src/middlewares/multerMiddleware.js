@@ -2,7 +2,7 @@ const multer = require('multer');
 const path = require('path');
 const { checkMimeType, imageTypes, videoTypes, magazineTypes } = require('../utils/fileValidators');
 
-const basePath = path.join(__dirname, '..', 'public', 'uploads');
+const basePath = path.join(__dirname, '..','..', 'public', 'uploads');
 
 const getTimestamp = () => {
     const now = new Date();
