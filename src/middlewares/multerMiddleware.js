@@ -1,8 +1,9 @@
 const multer = require('multer');
 const path = require('path');
+const { v4: uuidv4 } = require('uuid');
 const { checkMimeType, imageTypes, videoTypes, magazineTypes } = require('../utils/fileValidators');
 
-const basePath = path.join(__dirname, '..','..', 'public', 'uploads');
+const basePath = path.join(__dirname, '..', '..', 'public', 'uploads');
 
 const getTimestamp = () => {
     const now = new Date();
@@ -12,16 +13,18 @@ const getTimestamp = () => {
 
 const getStorage = (folder) =>
     multer.diskStorage({
-        destination: (req, file, cb) => cb(null, path.join(basePath, folder)),
+        destination: (req, file, cb) => {
+            cb(null, path.join(basePath, folder));
+        },
         filename: (req, file, cb) => {
             const ext = path.extname(file.originalname);
             const name = path.basename(file.originalname, ext);
             const timestamp = getTimestamp();
-            cb(null, `${name}_${timestamp}${ext}`);
+            const uniqueId = uuidv4();
+            cb(null, `${name}_${timestamp}_${uniqueId}${ext}`);
         }
     });
 
-// Aplicamos validadores
 const uploadImage = multer({
     storage: getStorage('images'),
     fileFilter: checkMimeType(imageTypes)
